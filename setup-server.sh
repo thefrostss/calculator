@@ -43,7 +43,10 @@ fi
 export Ali_Key="$ALI_KEY"
 export Ali_Secret="$ALI_SECRET"
 /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-/root/.acme.sh/acme.sh --issue --dns dns_ali -d "$DOMAIN"
+# --dnssleep：跳过国外公共 DNS 检查（国内服务器连不上，会死等），改为固定等待后直接签发
+# 已有有效证书时 acme.sh 会跳过，这里容忍非致命错误
+/root/.acme.sh/acme.sh --issue --dns dns_ali -d "$DOMAIN" --dnssleep 90 || echo "（证书已存在或跳过，继续）"
+ls /root/.acme.sh/${DOMAIN}_ecc/fullchain.cer >/dev/null 2>&1 || { echo "!!!!!! 证书签发失败，把上面的报错截图反馈 !!!!!!"; exit 1; }
 mkdir -p /root/emqx/certs
 /root/.acme.sh/acme.sh --install-cert -d "$DOMAIN" \
   --key-file /root/emqx/certs/key.pem \
