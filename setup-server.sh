@@ -8,11 +8,23 @@ set -e
 : "${MQTT_USER:?缺少 MQTT_USER}"
 : "${MQTT_PASS:?缺少 MQTT_PASS}"
 
-echo "===== [1/6] 安装基础组件 ====="
+echo "===== [1/6] 安装基础组件（自动识别 Ubuntu / 阿里云Linux） ====="
 export DEBIAN_FRONTEND=noninteractive
-apt-get update -y
-apt-get install -y docker.io curl git cron
-systemctl enable --now docker cron
+if command -v apt-get >/dev/null 2>&1; then
+  # Ubuntu / Debian
+  apt-get update -y
+  apt-get install -y docker.io curl git cron
+  systemctl enable --now docker cron
+else
+  # 阿里云Linux / CentOS
+  PM=yum
+  command -v dnf >/dev/null 2>&1 && PM=dnf || true
+  $PM install -y curl git cronie dnf-plugins-core || $PM install -y curl git cronie
+  $PM config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo || \
+    yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+  $PM install -y docker-ce
+  systemctl enable --now docker crond || systemctl enable --now docker
+fi
 
 echo "===== [2/6] 配置 docker 镜像加速（国内拉取用） ====="
 mkdir -p /etc/docker
