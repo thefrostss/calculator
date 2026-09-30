@@ -57,6 +57,11 @@ chmod 644 /root/emqx/certs/*.pem
 echo "===== [4/6] 写入 EMQX 配置 ====="
 mkdir -p /root/emqx/etc
 cat > /root/emqx/etc/emqx.conf << 'EOC'
+node {
+  name = "emqx@127.0.0.1"
+  cookie = "emqxsecretcookie"
+  data_dir = "/opt/emqx/data"
+}
 mqtt { allow_anonymous = false }
 authentication = [ { mechanism = password_based, backend = built_in_database, user_id_type = username } ]
 listeners.wss.default {
