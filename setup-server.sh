@@ -51,7 +51,7 @@ mkdir -p /root/emqx/certs
 /root/.acme.sh/acme.sh --install-cert -d "$DOMAIN" \
   --key-file /root/emqx/certs/key.pem \
   --fullchain-file /root/emqx/certs/cert.pem \
-  --reloadcmd "chmod 644 /root/emqx/certs/*.pem && docker restart emqx"
+  --reloadcmd "chmod 644 /root/emqx/certs/*.pem; docker restart emqx >/dev/null 2>&1 || true" || true
 chmod 644 /root/emqx/certs/*.pem
 
 echo "===== [4/6] 写入 EMQX 配置 ====="
