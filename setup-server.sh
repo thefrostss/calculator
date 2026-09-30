@@ -62,7 +62,6 @@ node {
   cookie = "emqxsecretcookie"
   data_dir = "/opt/emqx/data"
 }
-mqtt { allow_anonymous = false }
 authentication = [ { mechanism = password_based, backend = built_in_database, user_id_type = username } ]
 listeners.wss.default {
   bind = "0.0.0.0:8084"
