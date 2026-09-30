@@ -62,6 +62,9 @@ node {
   cookie = "emqxsecretcookie"
   data_dir = "/opt/emqx/data"
 }
+dashboard {
+  listeners.http { bind = "0.0.0.0:18083" }
+}
 authentication = [ { mechanism = password_based, backend = built_in_database, user_id_type = username } ]
 listeners.wss.default {
   bind = "0.0.0.0:8084"
